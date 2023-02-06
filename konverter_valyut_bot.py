@@ -31,7 +31,7 @@ class CryptoConverter:
             raise ConvertionException(f"Не удалось обработать валюту {quote}")
 
        try:
-            base_ticker = keys[quote]
+            base_ticker = keys[base]
        except KeyError:
             raise ConvertionException(f"Не удалось обработать валюту {base}")
 
@@ -41,11 +41,12 @@ class CryptoConverter:
             raise ConvertionException(f"Не удалось обработать количество {amount}.")
 
        r = requests.get(f'https://min-api.cryptocompare.com/data/price?fsym={quote_ticker}&tsyms={base_ticker}')
-       total_base = json.loads(r.content)[keys[base]]
+       total_base = str(round((float(json.loads(r.content)[keys[base]]) * float(amount)), 2))
 
        return total_base
-# total_base = str(round((float(json.loads(r.content)[keys[base]]) * float(amount)), 2))
 
+# total_base = str(round((float(json.loads(r.content)[keys[base]]) * float(amount)), 2))
+# json.loads(r.content)[keys[base]]
 
 @bot.message_handler(commands=['start', 'help'])
 def hepl(message: telebot.types.Message):
@@ -54,12 +55,14 @@ def hepl(message: telebot.types.Message):
     <количество первой валюты> \n Увидеть список всех возможных влют: /values"
     bot.reply_to(message, text)
 
+
 @bot.message_handler(commands=['values'])
 def values(message: telebot.types.Message):
     text = "Доступные валюты"
     for key in keys.keys():
         text = '\n'.join((text, key, ))
     bot.reply_to(message, text)
+
 
 @bot.message_handler(content_types=['text',])
 def convert(message: telebot.types.Message):
@@ -75,5 +78,6 @@ def convert(message: telebot.types.Message):
     bot.send_message(message.chat.id, text)
 
 
-# quote_ticker, base_ticker = keys[quote], keys[base]
 bot.polling()
+
+# quote_ticker, base_ticker = keys[quote], keys[base]
