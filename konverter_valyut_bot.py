@@ -13,9 +13,8 @@ keys = {
     'евро':'EUR'
 }
 
-#@bot.message_handler()
-#def echo_test(message: telebot.types.Message):
-#    bot.send_message(message.chat.id, 'Hello')
+class ConvertionException(Exception):
+    pass
 
 @bot.message_handler(commands=['start', 'help'])
 def hepl(message: telebot.types.Message):
@@ -33,7 +32,15 @@ def values(message: telebot.types.Message):
 
 @bot.message_handler(content_types=['text',])
 def convert(message: telebot.types.Message):
-    quote, base, amount = message.text.split(' ')
+    values = message.text.split(' ')
+
+    if len(values) > 3:
+        raise ConvertionException("Слишком много параметров.")
+
+    quote, base, amount = values
+
+    if quote == base
+        raise ConvertionException(f"Невозможно перевести одинаковые валюты {quote}.")
     r = requests.get(f'https://min-api.cryptocompare.com/data/price?fsym={keys[quote]}&tsyms={keys[base]}')
     total_base = str(round((float(json.loads(r.content)[keys[base]]) * float(amount)),2))
     text = f"Цена {amount} {quote} в {base} - {total_base}"
