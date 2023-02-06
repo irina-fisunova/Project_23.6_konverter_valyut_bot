@@ -39,9 +39,25 @@ def convert(message: telebot.types.Message):
 
     quote, base, amount = values
 
-    if quote == base
+    if quote == base:
         raise ConvertionException(f"Невозможно перевести одинаковые валюты {quote}.")
-    r = requests.get(f'https://min-api.cryptocompare.com/data/price?fsym={keys[quote]}&tsyms={keys[base]}')
+
+    try:
+        quote_ticker = keys[quote]
+    except KeyError:
+        raise ConvertionException(f"Не удалось обработать валюту {quote}")
+    try:
+        base_ticker = keys[quote]
+    except KeyError:
+        raise ConvertionException(f"Не удалось обработать валюту {base}")
+    try:
+        amount = float(amount)
+    except ValueError:
+        raise ConvertionException(f"Не удалось обработать количество {amount}.")
+
+    quote_ticker, base_ticker = keys[quote], keys[base]
+
+    r = requests.get(f'https://min-api.cryptocompare.com/data/price?fsym={quote_ticker}&tsyms={base_ticker}')
     total_base = str(round((float(json.loads(r.content)[keys[base]]) * float(amount)),2))
     text = f"Цена {amount} {quote} в {base} - {total_base}"
     bot.send_message(message.chat.id, text)
