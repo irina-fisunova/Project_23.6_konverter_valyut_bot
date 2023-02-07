@@ -3,9 +3,8 @@ from config import keys, TOKEN
 from extensions import CryptoConverter, ConvertionException
 
 
-
-
 bot = telebot.TeleBot(TOKEN)
+
 
 @bot.message_handler(commands=['start', 'help'])
 def hepl(message: telebot.types.Message):
@@ -30,8 +29,9 @@ def convert(message: telebot.types.Message):
 
         if len(values) != 3:
             raise ConvertionException("Запрос введен некорректно. Слишком много/мало параметров.")
-
         quote, base, amount = values
+        quote = quote.upper()
+        base = base.upper()
         total_base = CryptoConverter.convert(quote, base, amount)
     except ConvertionException as e:
         bot.reply_to(message, f"Ошибка пользователя. \n {e}")
