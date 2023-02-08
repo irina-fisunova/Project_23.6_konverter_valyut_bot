@@ -27,6 +27,13 @@ class CryptoConverter:
             raise ConvertionException(f"Не удалось обработать количество {amount}.")
 
        r = requests.get(f'https://min-api.cryptocompare.com/data/price?fsym={quote_ticker}&tsyms={base_ticker}')
-       total_base = str(round((float(json.loads(r.content)[keys[base]]) * float(amount)), 2))
+       single_cost = float(json.loads(r.content)[keys[base]])
+       total_cost = single_cost * float(amount)
 
-       return total_base
+       cost = {
+           'single': str(round(single_cost, 2)),
+           'total': str(round(total_cost, 2))
+       }
+
+
+       return cost
