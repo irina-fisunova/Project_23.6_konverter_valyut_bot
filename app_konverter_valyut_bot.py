@@ -32,16 +32,15 @@ def convert(message: telebot.types.Message):
         quote, base, amount = values
         quote = quote.upper()
         base = base.upper()
-        total_base = CryptoConverter.convert(quote, base, amount)
+        amount = amount.replace(",", ".")
+        cost = CryptoConverter.convert(quote, base, amount)
     except ConvertionException as e:
         bot.reply_to(message, f"Ошибка пользователя. \n {e}")
     except Exception as e:
         bot.reply_to(message, f"Не удалось обработать команду. \n {e}")
     else:
-        text = f"Цена {amount} {quote} в {base} - {total_base}"
+        text = f"Цена 1 {quote} - {cost.get('single')} {base}.\n Стоимость {amount} {quote} в {base} - {cost.get('total')}"
         bot.send_message(message.chat.id, text)
 
 
 bot.polling()
-
-# quote_ticker, base_ticker = keys[quote], keys[base]
